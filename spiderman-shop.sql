@@ -2,7 +2,7 @@
 -- version 5.2.1
 -- https://www.phpmyadmin.net/
 --
--- Host: REDACTED:3306
+-- Host: example-host:3306
 -- Generation Time: Jun 22, 2023 at 06:40 PM
 -- Server version: 5.7.42
 -- PHP Version: 8.1.16
@@ -18,7 +18,7 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 --
--- Database: `REDACTEDman_shop_example`
+-- Database: `example_store`
 --
 
 -- --------------------------------------------------------
