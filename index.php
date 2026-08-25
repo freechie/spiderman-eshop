@@ -1,36 +1,65 @@
-<!DOCTYPE html>
-<html>
+<?php
 
-<head lang="en">
+declare(strict_types=1);
+
+require_once __DIR__ . '/bootstrap.php';
+
+$user = current_user();
+$flash = take_flash();
+?>
+<!doctype html>
+<html lang="en">
+<head>
     <meta charset="utf-8">
-    <title>Spiderman: No Way Home Merch Store</title>
-    <link href="style.css" rel="stylesheet" type="text/css">
-    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.1/css/all.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Multiverse Shop</title>
+    <link rel="stylesheet" href="style.css">
 </head>
-
 <body>
-    <div class="intro">
-        <h3>Log in to find the best Spiderman: No Way Home Merch below!</h3> <br>
-        <img src="./img/intro_fan_art.PNG" class="intro-image" /> <br>
-        <h3>More updates to functionality coming soon<br> Please check back again soon 👷🏾‍♀️🚧👷🏽‍♂️</h3>
-    </div>
-    <div class="login">
-        <h1>Login</h1>
-        <form action="authenticate.php" method="post">
-            <label for="username">
-                <i class="fas fa-user"></i>
-            </label>
-            <input type="text" name="username" placeholder="Username" id="username" required>
-            <label for="password">
-                <i class="fas fa-lock"></i>
-            </label>
-            <input type="password" name="password" placeholder="Password" id="password" required>
-            <br><br>
-            <input type="submit" value="Login">
-            <a type="button" href="registration.php" class="register-btn">Register</a>
-        </form>
-    </div>
+<main class="shell narrow">
+    <header class="hero">
+        <p class="eyebrow">Database Systems final project</p>
+        <h1>Multiverse Shop</h1>
+        <p>A small PHP and MySQL storefront demonstrating relational data, transactions, and reporting.</p>
+    </header>
 
+    <?php if ($flash !== null): ?>
+        <p class="notice <?= escape($flash['type'] ?? 'info') ?>"><?= escape($flash['message'] ?? '') ?></p>
+    <?php endif; ?>
+
+    <?php if ($user !== null): ?>
+        <section class="panel stack">
+            <h2>Signed in</h2>
+            <p>Welcome, <?= escape($user['username']) ?>.</p>
+            <a class="button" href="<?= $user['role'] === 'employee' ? 'employee.php' : 'products.php' ?>">Continue</a>
+            <form action="logout.php" method="post">
+                <?= csrf_field() ?>
+                <button class="button secondary" type="submit">Sign out</button>
+            </form>
+        </section>
+    <?php else: ?>
+        <section class="panel">
+            <h2>Sign in</h2>
+            <form class="stack" action="login.php" method="post">
+                <?= csrf_field() ?>
+
+                <label for="account_type">Account type</label>
+                <select id="account_type" name="account_type" required>
+                    <option value="client">Client</option>
+                    <option value="employee">Employee</option>
+                </select>
+
+                <label for="username">Username</label>
+                <input id="username" name="username" type="text" maxlength="60" autocomplete="username" required>
+
+                <label for="password">Password</label>
+                <input id="password" name="password" type="password" maxlength="128" autocomplete="current-password" required>
+
+                <button class="button" type="submit">Sign in</button>
+            </form>
+            <p class="panel-footer">Need a client account? <a href="register.php">Register locally</a>.</p>
+        </section>
+    <?php endif; ?>
+</main>
 </body>
-
 </html>

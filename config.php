@@ -1,32 +1,55 @@
 <?php
 
-$database_config = [
-    'DB_HOST' => getenv('DB_HOST'),
-    'DB_USER' => getenv('DB_USER'),
-    'DB_PASSWORD' => getenv('DB_PASSWORD'),
-    'DB_NAME' => getenv('DB_NAME'),
-];
+declare(strict_types=1);
 
-$missing_environment_variables = [];
-foreach ($database_config as $name => $value) {
-    if ($value === false || $value === '') {
-        $missing_environment_variables[] = $name;
+function database(): mysqli
+{
+    static $connection = null;
+
+    if ($connection instanceof mysqli) {
+        return $connection;
     }
-}
 
-if ($missing_environment_variables !== []) {
-    throw new RuntimeException(
-        'Missing database environment variables: ' . implode(', ', $missing_environment_variables)
-    );
-}
+    $config = [
+        'host' => getenv('DB_HOST'),
+        'port' => getenv('DB_PORT'),
+        'user' => getenv('DB_USER'),
+        'password' => getenv('DB_PASSWORD'),
+        'database' => getenv('DB_NAME'),
+    ];
 
-$db_connection = new mysqli(
-    $database_config['DB_HOST'],
-    $database_config['DB_USER'],
-    $database_config['DB_PASSWORD'],
-    $database_config['DB_NAME']
-);
+    foreach ($config as $value) {
+        if ($value === false || $value === '') {
+            http_response_code(503);
+            exit('Database configuration is incomplete.');
+        }
+    }
 
-if ($db_connection->connect_errno !== 0) {
-    throw new RuntimeException('Database connection failed.');
+    $port = filter_var($config['port'], FILTER_VALIDATE_INT, [
+        'options' => ['min_range' => 1, 'max_range' => 65535],
+    ]);
+
+    if ($port === false) {
+        http_response_code(503);
+        exit('Database configuration is incomplete.');
+    }
+
+    mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
+
+    try {
+        $connection = new mysqli(
+            (string) $config['host'],
+            (string) $config['user'],
+            (string) $config['password'],
+            (string) $config['database'],
+            $port
+        );
+        $connection->set_charset('utf8mb4');
+    } catch (mysqli_sql_exception) {
+        error_log('Database connection failed.');
+        http_response_code(503);
+        exit('Database service is unavailable.');
+    }
+
+    return $connection;
 }

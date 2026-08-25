@@ -1,14 +1,10 @@
 <?php
-// Start the session
-session_start();
 
-// Destroy the session
-session_destroy();
+declare(strict_types=1);
 
-// Redirect the user to the login page or any other desired page
-header("Location: loginCheck.php");
-exit();
-?>
+require_once __DIR__ . '/bootstrap.php';
 
-
-
+require_post();
+verify_csrf();
+clear_app_session();
+redirect('index.php');

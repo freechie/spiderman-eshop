@@ -1,86 +1,96 @@
-# Spider-Man E-Shop Database System
+# Spider-Man E-Shop database project
 
-This e-commerce prototype was built for a Database Systems final project. Its main purpose is to demonstrate a relational design for customers, employees, products, carts, and order history through a PHP web interface.
+This repository contains a hardened version of a Database Systems final project. The original Spider-Man-themed coursework is now presented as a small fictional Multiverse Shop so the public repository does not redistribute third-party artwork or sample personal data.
+
+The project focuses on the relational database layer: normalized order data, foreign keys, prepared queries, transactional checkout, inventory updates, and aggregate employee reports.
 
 ## Database design
 
-The schema and fictional fixtures are in [`spiderman-shop.sql`](spiderman-shop.sql).
+[`spiderman-shop.sql`](spiderman-shop.sql) defines six InnoDB tables:
 
 | Table | Purpose |
 | --- | --- |
-| `CLIENT` | Customer profile and login fields |
-| `EMPLOYEE` | Employee profile, reporting hierarchy fields, and login fields |
-| `PRODUCT_CATEGORY` | Product category lookup data |
-| `PRODUCT` | Product catalog, stock, category, and price |
-| `CART` | A customer's shopping cart |
-| `CART_INFO` | Cart line items connecting carts and products |
-| `ORDER_HISTORY` | Completed-order snapshots used for customer history and employee reporting |
+| `CLIENT` | Client identity, unique username, and password hash |
+| `EMPLOYEE` | Employee identity, unique username, and password hash |
+| `PRODUCT_CATEGORY` | Normalized category lookup data |
+| `PRODUCT` | Catalog items, inventory, category, and price |
+| `ORDERS` | Order header with client, timestamp, and total |
+| `ORDER_ITEM` | Order lines connecting orders and products |
 
-The ID columns express these logical relationships:
+Foreign keys enforce the client-to-order, order-to-item, product-to-item, and category-to-product relationships. Composite and secondary indexes support order history and reporting queries. Checkout locks product rows and commits the order, order lines, and stock updates in one transaction.
 
-- a client owns a cart;
-- a cart contains multiple cart-info rows;
-- each cart-info row identifies a product;
-- a product belongs to a category; and
-- order-history rows identify the client who placed each order.
+The checked-in fixtures are fictional. Account password columns contain obvious unusable dummy values. Use the local password tool or client registration page to create working local credentials.
 
-The original project schema uses MyISAM. It defines primary keys and lookup indexes, but MyISAM does not enforce foreign-key constraints. The relationships above are therefore maintained by the application rather than by the database engine.
+## Security controls
 
-## Database operations
+- Database settings come only from environment variables.
+- MySQLi prepared statements bind every request or session value used in a query.
+- PHP's password API hashes and verifies account passwords.
+- Session IDs rotate after login, cookies are HTTP-only and SameSite, and HTTPS deployments can require secure cookies.
+- Every state-changing form requires a CSRF token.
+- Client and employee pages enforce role-based authorization.
+- Cart pricing and stock come from the database, not hidden form fields.
+- HTML output is context-encoded.
+- Database and SQL errors are not returned to the browser.
 
-The PHP application demonstrates several database workloads:
-
-- prepared lookups for client and employee authentication;
-- client registration;
-- product catalog reads;
-- order-history inserts and customer order-history views; and
-- employee reporting queries for transactions, customers, popular products, and revenue.
-
-Database access uses MySQLi. [`config.php`](config.php) reads connection settings from environment variables and returns generic connection errors, so working credentials are not stored in tracked files.
-
-## Data safety
-
-The public SQL fixture contains fictional records only. Names, addresses, identifiers, usernames, and order data are invented for demonstration. Password fields contain obvious unusable dummy values, not live credentials.
-
-The repository intentionally excludes `.env`. Never commit a working database password or a production data export.
+This remains a compact educational application, not a production commerce platform.
 
 ## Run locally
 
 Requirements:
 
-- PHP with the MySQLi extension
-- MySQL or MariaDB
-- a web server such as PHP's development server or Apache in XAMPP
+- PHP 8.1 or newer with MySQLi
+- MySQL 8 or a compatible MariaDB release
 
 1. Create a local database.
 
-2. Import the schema and fictional fixtures into that database:
+2. Import the schema and fictional fixtures:
 
    ```sh
    mysql -u your_local_user -p your_local_database < spiderman-shop.sql
    ```
 
-3. Copy the environment template and replace every placeholder with local-only settings:
+3. Copy the environment template and replace every placeholder with local-only database settings:
 
    ```sh
    cp .env.example .env
    ```
 
-4. Export the settings and start the development server:
+4. Export the settings into the current shell:
 
    ```sh
    set -a
    source .env
    set +a
+   ```
+
+5. Give the fictional employee account a local password. The tool reads the password without printing it:
+
+   ```sh
+   php scripts/set-local-password.php employee employee_example
+   ```
+
+6. Start the development server:
+
+   ```sh
    php -S 127.0.0.1:8000
    ```
 
-5. Open `http://127.0.0.1:8000`.
+7. Open `http://127.0.0.1:8000`. Register a client account through the browser or set a local password for `client_example` with the same CLI tool.
 
-The fixture password values intentionally cannot be used to sign in. Replace them only in your local database if you need to exercise an authenticated flow.
+For an HTTPS deployment, set `SESSION_SECURE=1`. Keep it at `0` for local HTTP development.
 
-## Technology
+## Verification
 
-- PHP and MySQLi
-- MySQL or MariaDB
-- HTML, CSS, and JavaScript
+Run the helper checks and PHP syntax checks:
+
+```sh
+php tests/helpers_test.php
+find . -name '*.php' -not -path './.git/*' -print0 | xargs -0 -n 1 php -l
+```
+
+Security scans use the audit configuration stored outside this repository. Phase 1 also verifies current files and complete Git history from a fresh clone.
+
+## Repository policy
+
+See [`SECURITY.md`](SECURITY.md) for private vulnerability reporting. See [`LICENSE.md`](LICENSE.md) for the source-availability terms. No third-party artwork is included.

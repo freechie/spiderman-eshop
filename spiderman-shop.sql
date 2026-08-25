@@ -1,262 +1,101 @@
--- phpMyAdmin SQL Dump
--- version 5.2.1
--- https://www.phpmyadmin.net/
---
--- Host: example-host:3306
--- Generation Time: Jun 22, 2023 at 06:40 PM
--- Server version: 5.7.42
--- PHP Version: 8.1.16
+SET NAMES utf8mb4;
+SET FOREIGN_KEY_CHECKS = 0;
 
-SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
-START TRANSACTION;
-SET time_zone = "+00:00";
+DROP TABLE IF EXISTS `ORDER_ITEM`;
+DROP TABLE IF EXISTS `ORDERS`;
+DROP TABLE IF EXISTS `PRODUCT`;
+DROP TABLE IF EXISTS `PRODUCT_CATEGORY`;
+DROP TABLE IF EXISTS `EMPLOYEE`;
+DROP TABLE IF EXISTS `CLIENT`;
 
-
-/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
-/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
-/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!40101 SET NAMES utf8mb4 */;
-
---
--- Database: `example_store`
---
-
--- --------------------------------------------------------
-
---
--- Table structure for table `CART`
---
-
-CREATE TABLE `CART` (
-  `Cart_ID` int(11) NOT NULL,
-  `Client_ID` int(11) NOT NULL
-) ENGINE=MyISAM DEFAULT CHARSET=latin1;
-
--- --------------------------------------------------------
-
---
--- Table structure for table `CART_INFO`
---
-
-CREATE TABLE `CART_INFO` (
-  `CART_INFO_ID` int(11) NOT NULL,
-  `CART_ID` int(11) DEFAULT NULL,
-  `PRODUCT_ID` int(11) DEFAULT NULL,
-  `QUANTITY` int(11) DEFAULT NULL
-) ENGINE=MyISAM DEFAULT CHARSET=latin1;
-
--- --------------------------------------------------------
-
---
--- Table structure for table `CLIENT`
---
+SET FOREIGN_KEY_CHECKS = 1;
 
 CREATE TABLE `CLIENT` (
-  `Client_ID` int(11) NOT NULL,
-  `FirstName` varchar(15) NOT NULL,
-  `LastName` varchar(20) NOT NULL,
-  `password` varchar(30) NOT NULL,
-  `username` varchar(20) NOT NULL,
-  `Sex` char(1) DEFAULT NULL
-) ENGINE=MyISAM DEFAULT CHARSET=latin1;
-
---
--- Dumping data for table `CLIENT`
---
-
-INSERT INTO `CLIENT` (`Client_ID`, `FirstName`, `LastName`, `password`, `username`, `Sex`) VALUES
-(1, 'Miles', 'Morales', 'DUMMY_NOT_FOR_LOGIN', 'miles.demo', 'M'),
-(2, 'Gwen', 'Stacy', 'DUMMY_NOT_FOR_LOGIN', 'gwen.demo', 'F');
-
--- --------------------------------------------------------
-
---
--- Table structure for table `EMPLOYEE`
---
+  `Client_ID` int unsigned NOT NULL AUTO_INCREMENT,
+  `FirstName` varchar(60) NOT NULL,
+  `LastName` varchar(60) NOT NULL,
+  `username` varchar(60) NOT NULL,
+  `password` varchar(255) NOT NULL,
+  PRIMARY KEY (`Client_ID`),
+  UNIQUE KEY `client_username_unique` (`username`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 CREATE TABLE `EMPLOYEE` (
-  `Employee_id` int(11) UNSIGNED NOT NULL,
-  `Fname` varchar(20) NOT NULL,
-  `Minit` char(1) DEFAULT NULL,
-  `Lname` varchar(20) NOT NULL,
-  `username` varchar(20) NOT NULL,
-  `password` varchar(20) NOT NULL,
-  `Ssn` char(9) NOT NULL,
-  `Bdate` date DEFAULT NULL,
-  `Address` varchar(30) DEFAULT NULL,
-  `Sex` char(1) DEFAULT NULL,
-  `Salary` decimal(6,0) DEFAULT NULL,
-  `Super_ssn` char(9) DEFAULT NULL,
-  `Dno` int(11) NOT NULL
-) ENGINE=MyISAM DEFAULT CHARSET=latin1;
-
---
--- Dumping data for table `EMPLOYEE`
---
-
-INSERT INTO `EMPLOYEE` (`Employee_id`, `Fname`, `Minit`, `Lname`, `username`, `password`, `Ssn`, `Bdate`, `Address`, `Sex`, `Salary`, `Super_ssn`, `Dno`) VALUES
-(1, 'Peter', 'B', 'Parker', 'employee.demo', 'DUMMY_NOT_FOR_LOGIN', '000000000', '1900-01-01', 'Fictional Address', 'M', 0, NULL, 1);
-
--- --------------------------------------------------------
-
---
--- Table structure for table `ORDER_HISTORY`
---
-
-CREATE TABLE `ORDER_HISTORY` (
-  `ID` int(11) NOT NULL,
-  `CLIENT_ID` varchar(50) NOT NULL,
-  `PRODUCT_NAME` varchar(100) NOT NULL,
-  `PRODUCT_PRICE` decimal(10,2) NOT NULL,
-  `ORDER_DATE` date DEFAULT NULL
-) ENGINE=MyISAM DEFAULT CHARSET=latin1;
-
---
--- Dumping data for table `ORDER_HISTORY`
---
-
-INSERT INTO `ORDER_HISTORY` (`ID`, `CLIENT_ID`, `PRODUCT_NAME`, `PRODUCT_PRICE`, `ORDER_DATE`) VALUES
-(1, 'miles.demo', 'Demo Web Cartridge', 25.00, '2000-01-01');
-
--- --------------------------------------------------------
-
---
--- Table structure for table `PRODUCT`
---
-
-CREATE TABLE `PRODUCT` (
-  `Product_ID` int(11) NOT NULL,
-  `Product_Stock` int(11) DEFAULT NULL,
-  `Product_Name` varchar(255) NOT NULL,
-  `Category_ID` int(11) DEFAULT NULL,
-  `Product_Price` int(11) NOT NULL
-) ENGINE=MyISAM DEFAULT CHARSET=latin1;
-
---
--- Dumping data for table `PRODUCT`
---
-
-INSERT INTO `PRODUCT` (`Product_ID`, `Product_Stock`, `Product_Name`, `Category_ID`, `Product_Price`) VALUES
-(1, 10, 'Demo T-Shirt', 1, 20),
-(2, 10, 'Demo Web Cartridge', 2, 25),
-(3, 10, 'Demo Poster', 3, 15);
-
--- --------------------------------------------------------
-
---
--- Table structure for table `PRODUCT_CATEGORY`
---
+  `Employee_ID` int unsigned NOT NULL AUTO_INCREMENT,
+  `FirstName` varchar(60) NOT NULL,
+  `LastName` varchar(60) NOT NULL,
+  `username` varchar(60) NOT NULL,
+  `password` varchar(255) NOT NULL,
+  PRIMARY KEY (`Employee_ID`),
+  UNIQUE KEY `employee_username_unique` (`username`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 CREATE TABLE `PRODUCT_CATEGORY` (
-  `Category_ID` int(11) NOT NULL,
-  `Category` varchar(255) DEFAULT NULL
-) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+  `Category_ID` int unsigned NOT NULL AUTO_INCREMENT,
+  `Category` varchar(80) NOT NULL,
+  PRIMARY KEY (`Category_ID`),
+  UNIQUE KEY `product_category_name_unique` (`Category`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
---
--- Dumping data for table `PRODUCT_CATEGORY`
---
+CREATE TABLE `PRODUCT` (
+  `Product_ID` int unsigned NOT NULL AUTO_INCREMENT,
+  `Product_Stock` int unsigned NOT NULL DEFAULT 0,
+  `Product_Name` varchar(120) NOT NULL,
+  `Category_ID` int unsigned NOT NULL,
+  `Product_Price` decimal(10,2) unsigned NOT NULL,
+  PRIMARY KEY (`Product_ID`),
+  KEY `product_category_index` (`Category_ID`),
+  CONSTRAINT `product_category_fk`
+    FOREIGN KEY (`Category_ID`) REFERENCES `PRODUCT_CATEGORY` (`Category_ID`)
+    ON UPDATE CASCADE ON DELETE RESTRICT
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE TABLE `ORDERS` (
+  `Order_ID` bigint unsigned NOT NULL AUTO_INCREMENT,
+  `Client_ID` int unsigned NOT NULL,
+  `Order_Date` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `Total_Amount` decimal(10,2) unsigned NOT NULL,
+  PRIMARY KEY (`Order_ID`),
+  KEY `orders_client_date_index` (`Client_ID`, `Order_Date`),
+  CONSTRAINT `orders_client_fk`
+    FOREIGN KEY (`Client_ID`) REFERENCES `CLIENT` (`Client_ID`)
+    ON UPDATE CASCADE ON DELETE RESTRICT
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE TABLE `ORDER_ITEM` (
+  `Order_ID` bigint unsigned NOT NULL,
+  `Product_ID` int unsigned NOT NULL,
+  `Quantity` int unsigned NOT NULL,
+  `Unit_Price` decimal(10,2) unsigned NOT NULL,
+  PRIMARY KEY (`Order_ID`, `Product_ID`),
+  KEY `order_item_product_index` (`Product_ID`),
+  CONSTRAINT `order_item_order_fk`
+    FOREIGN KEY (`Order_ID`) REFERENCES `ORDERS` (`Order_ID`)
+    ON UPDATE CASCADE ON DELETE CASCADE,
+  CONSTRAINT `order_item_product_fk`
+    FOREIGN KEY (`Product_ID`) REFERENCES `PRODUCT` (`Product_ID`)
+    ON UPDATE CASCADE ON DELETE RESTRICT
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Fictional records only. Account passwords are intentionally unusable dummy values.
+INSERT INTO `CLIENT` (`Client_ID`, `FirstName`, `LastName`, `username`, `password`) VALUES
+  (1, 'Alex', 'Example', 'client_example', 'DUMMY_NOT_A_LOGIN');
+
+INSERT INTO `EMPLOYEE` (`Employee_ID`, `FirstName`, `LastName`, `username`, `password`) VALUES
+  (1, 'Casey', 'Example', 'employee_example', 'DUMMY_NOT_A_LOGIN');
 
 INSERT INTO `PRODUCT_CATEGORY` (`Category_ID`, `Category`) VALUES
-(1, 'Apparel'),
-(2, 'Accessories'),
-(3, 'Collectibles');
+  (1, 'Apparel'),
+  (2, 'Accessories'),
+  (3, 'Prints');
 
---
--- Indexes for dumped tables
---
+INSERT INTO `PRODUCT` (`Product_ID`, `Product_Stock`, `Product_Name`, `Category_ID`, `Product_Price`) VALUES
+  (1, 20, 'Portal Hoodie', 1, 48.00),
+  (2, 35, 'Orbit Mug', 2, 16.00),
+  (3, 15, 'Nebula Poster', 3, 22.00);
 
---
--- Indexes for table `CART`
---
-ALTER TABLE `CART`
-  ADD PRIMARY KEY (`Cart_ID`);
+INSERT INTO `ORDERS` (`Order_ID`, `Client_ID`, `Order_Date`, `Total_Amount`) VALUES
+  (1, 1, '2026-01-15 12:00:00', 48.00);
 
---
--- Indexes for table `CART_INFO`
---
-ALTER TABLE `CART_INFO`
-  ADD PRIMARY KEY (`CART_INFO_ID`),
-  ADD KEY `CART_ID` (`CART_ID`),
-  ADD KEY `PRODUCT_ID` (`PRODUCT_ID`);
-
---
--- Indexes for table `CLIENT`
---
-ALTER TABLE `CLIENT`
-  ADD PRIMARY KEY (`Client_ID`);
-
---
--- Indexes for table `EMPLOYEE`
---
-ALTER TABLE `EMPLOYEE`
-  ADD PRIMARY KEY (`Employee_id`);
-
---
--- Indexes for table `ORDER_HISTORY`
---
-ALTER TABLE `ORDER_HISTORY`
-  ADD PRIMARY KEY (`ID`);
-
---
--- Indexes for table `PRODUCT`
---
-ALTER TABLE `PRODUCT`
-  ADD PRIMARY KEY (`Product_ID`),
-  ADD KEY `Category_ID` (`Category_ID`);
-
---
--- Indexes for table `PRODUCT_CATEGORY`
---
-ALTER TABLE `PRODUCT_CATEGORY`
-  ADD PRIMARY KEY (`Category_ID`);
-
---
--- AUTO_INCREMENT for dumped tables
---
-
---
--- AUTO_INCREMENT for table `CART`
---
-ALTER TABLE `CART`
-  MODIFY `Cart_ID` int(11) NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT for table `CART_INFO`
---
-ALTER TABLE `CART_INFO`
-  MODIFY `CART_INFO_ID` int(11) NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT for table `CLIENT`
---
-ALTER TABLE `CLIENT`
-  MODIFY `Client_ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
-
---
--- AUTO_INCREMENT for table `EMPLOYEE`
---
-ALTER TABLE `EMPLOYEE`
-  MODIFY `Employee_id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
-
---
--- AUTO_INCREMENT for table `ORDER_HISTORY`
---
-ALTER TABLE `ORDER_HISTORY`
-  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
-
---
--- AUTO_INCREMENT for table `PRODUCT`
---
-ALTER TABLE `PRODUCT`
-  MODIFY `Product_ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
-
---
--- AUTO_INCREMENT for table `PRODUCT_CATEGORY`
---
-ALTER TABLE `PRODUCT_CATEGORY`
-  MODIFY `Category_ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
-COMMIT;
-
-/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
-/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
-/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+INSERT INTO `ORDER_ITEM` (`Order_ID`, `Product_ID`, `Quantity`, `Unit_Price`) VALUES
+  (1, 1, 1, 48.00);
