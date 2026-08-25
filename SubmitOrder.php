@@ -20,19 +20,8 @@ if (isset($_SESSION['username'])) {
 if (isset($_POST['submit_order'])) {
 	// Retrieve the cart items from the session
 	$cart_items = $_SESSION['cart'];
-
-	// Connect to the database
-	$servername = "REDACTED";
-	$db_username = "REDACTED";
-	$password = "REDACTED";
-	$database = "REDACTED";
-
-	$conn = mysqli_connect($servername, $db_username, $password, $database);
-
-	// Check connection
-	if (!$conn) {
-    	die("Connection failed: " . mysqli_connect_error());
-	}
+	require_once __DIR__ . '/config.php';
+	$conn = $db_connection;
 
 	// Prepare and execute the query to insert the order data into the database
 	$orderDate = date('Y-m-d'); // Get the current date

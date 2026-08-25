@@ -14,14 +14,17 @@
     <h1>Employee View of the SpiderMan Multiverse Shop</h1>
 
     <?php
-    // Database credentials
-    $servername = "REDACTED";
-    $database = "REDACTED";
-    $username = "REDACTED";
-    $password = "REDACTED";
-
-    // Create a new PDO instance
-    $conn = new PDO("mysql:host=$servername;dbname=$database", $username, $password);
+    require_once __DIR__ . '/config.php';
+    $pdo_dsn = sprintf(
+        'mysql:host=%s;dbname=%s;charset=utf8mb4',
+        $database_config['DB_HOST'],
+        $database_config['DB_NAME']
+    );
+    $conn = new PDO(
+        $pdo_dsn,
+        $database_config['DB_USER'],
+        $database_config['DB_PASSWORD']
+    );
 
     // Fetch transactions
     $transactionQuery = $conn->query("SELECT * FROM ORDER_HISTORY");

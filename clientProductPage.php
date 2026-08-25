@@ -13,10 +13,8 @@ $employee_password = $_POST['employee_password'];
 $client_username = $_POST['client_user'];
 $client_password = $_POST['client_password'];
 
-$connection = new mysqli("REDACTED", "REDACTED", "REDACTED", "REDACTED");
-if ($connection->connect_error) {
-	die("Unable to connect to the database " . $connection->connect_error);
-}
+require_once __DIR__ . '/config.php';
+$connection = $db_connection;
 
 $sql = "SELECT * FROM PRODUCT";
 
